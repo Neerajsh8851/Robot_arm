@@ -762,13 +762,17 @@ void tryConnection() {
       currentStatus = port + " busy";
     }
   }
-  currentStatus = "failed..";
+  currentStatus = "failed";
 }
 
 
+// this event will fire when 
+// there is a new line char in buffer
 void serialEvent(Serial p) { 
-  String inStr = p.readString().trim();
+  String inStr = p.readString().trim();  // remove extra white spaces
 
+// this notifies all the threads 
+// to move on 
   try {
     lock.lock();
     if (inStr.equals("a")) {
@@ -783,16 +787,15 @@ void serialEvent(Serial p) {
 
 
 
-// sync connection
+/**
+This function is to check for the connection
+*/
 void sync() {
-  println("");
-
   inTurn = "";
   try {
-    println("lock");
     lock.lock();
     port1.write("s");
-    cond.await(2, TimeUnit.SECONDS);
+    cond.await(2, TimeUnit.SECONDS);  // wait for 2 seconds for an answer.
 
     if (!inTurn.equals("a")) {
       currentStatus = "disconnect";
@@ -802,7 +805,6 @@ void sync() {
     ex.printStackTrace();
   } 
   finally {
-    println("unlock");
     lock.unlock();
   }
 }

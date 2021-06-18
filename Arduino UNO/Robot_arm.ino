@@ -8,24 +8,24 @@ int servopin4 = 3;    //Define servo interface digital interface 3
 int servopin5 = 11;   //Define servo interface digital interface 11
 
 int moveServoData;
+// servo data
 int servo1Angle = 90;
 int servo2Angle = 90;
 int servo3Angle = 90;
 int servo4Angle = 90;
 int servo5Angle = 90;
+
 Servo servo1;
 Servo servo2;
 Servo servo3;
 Servo servo4;
 Servo servo5;
-int angle = 90;        //Angle of rotation of the servo
 
 boolean autoLock = false;
 //boolean key_mouse_lock = false;
 boolean closeLock = false;
 
 void setup() {
-  // put your setup code here, to run once:
   pinMode(servopin1, OUTPUT); //Set the servo interface as the output interface
   pinMode(servopin2, OUTPUT); //Set the servo interface as the output interface
   pinMode(servopin3, OUTPUT); //Set the servo interface as the output interface
@@ -45,127 +45,26 @@ void setup() {
   servo4.write(90);
   servo5.write(90);
   delay(20);
-  //servo1Pulse(90);
+
 }
 void loop() {
   delay(20);
 
   do {
-
     moveServoData = Serial.read();
 
+    // dont waste time
     if (moveServoData == -1) {
       return;
     }
 
+    // process inputs
+    if (base(moveServoData)) continue;
+    if (shoulder(moveServoData)) continue;
+    if (elbow(moveServoData)) continue;
+    if (rotate(moveServoData)) continue;
+    if (gripper(moveServoData)) continue;
 
-    if (moveServoData == 'o') {
-      autoLock = false;
-      closeLock = false;
-      servo1Angle++;
-      if (servo1Angle >= 180) {
-        servo1Angle = 180;
-      }
-      servo1.write(servo1Angle);
-    }
-
-    if (moveServoData == 'p') { 
-      autoLock = false;
-      closeLock = false;
-      servo1Angle--;
-      if (servo1Angle <= 0) {
-        servo1Angle = 0;
-      }
-      servo1.write(servo1Angle);
-    }
-
-
-    if (moveServoData == 'u') {
-      autoLock = false;
-      closeLock = false;
-      servo2Angle++;
-      if (servo2Angle >= 180) {
-        servo2Angle = 180;
-      }
-      servo2.write(servo2Angle);
-    }
-
-    if (moveServoData == 'i') {
-      autoLock = false;
-      closeLock = false;
-      servo2Angle--;
-      if (servo2Angle <= 0) {
-        servo2Angle = 0;
-      }
-      servo2.write(servo2Angle);
-    }
-
-    if (moveServoData == 't') {
-      autoLock = false;
-      closeLock = false;
-      servo3Angle++;
-      if (servo3Angle >= 180) {
-        servo3Angle = 180;
-      }
-      servo3.write(servo3Angle);
-    }
-
-
-    if (moveServoData == 'y') {
-      autoLock = false;
-      closeLock = false;
-      servo3Angle--;
-      if (servo3Angle <= 0) {
-        servo3Angle = 0;
-      }
-      servo3.write(servo3Angle);
-    }
-
-
-
-
-    if (moveServoData == 'e') {
-      autoLock = false;
-      closeLock = false;
-      servo4Angle++;
-      if (servo4Angle >= 180) {
-        servo4Angle = 180;
-      }
-      servo4.write(servo4Angle);
-    }
-
-
-    if (moveServoData == 'r') {
-      autoLock = false;
-      closeLock = false;
-      servo4Angle--;
-      if (servo4Angle <= 0) {
-        servo4Angle = 0;
-      }
-      servo4.write(servo4Angle);
-    }
-
-
-    if (moveServoData == 'q') {
-      autoLock = false;
-      closeLock = false;
-      servo5Angle++;
-      if (servo5Angle >= 90) {
-        servo5Angle = 90;
-      }
-      servo5.write(servo5Angle);
-    }
-
-
-    if (moveServoData == 'w') {
-      autoLock = false;
-      closeLock = false;
-      servo5Angle--;
-      if (servo5Angle <= 35) {
-        servo5Angle = 35;
-      }
-      servo5.write(servo5Angle);
-    }
 
 
     if (moveServoData == 'n') {
@@ -174,9 +73,145 @@ void loop() {
       closeLock = false;
     }
 
+    // send an ack in response
     if (moveServoData == 's') {
-        Serial.println('a');
-    } 
+      Serial.println('a');
+    }
 
   } while (Serial.available() > 0);
 }
+
+
+bool base(int moveServoData) {
+  if (moveServoData == 'o') {
+    autoLock = false;
+    closeLock = false;
+    servo1Angle++;
+    if (servo1Angle >= 180) {
+      servo1Angle = 180;
+    }
+    servo1.write(servo1Angle);
+    return true;
+  }
+
+  if (moveServoData == 'p') {
+    autoLock = false;
+    closeLock = false;
+    servo1Angle--;
+    if (servo1Angle <= 0) {
+      servo1Angle = 0;
+    }
+    servo1.write(servo1Angle);
+    return true;
+  }
+
+  return false;
+}
+
+
+bool shoulder(int moveServoData) {
+  if (moveServoData == 'u') {
+    autoLock = false;
+    closeLock = false;
+    servo2Angle++;
+    if (servo2Angle >= 180) {
+      servo2Angle = 180;
+    }
+    servo2.write(servo2Angle);
+    return true;
+  }
+
+  if (moveServoData == 'i') {
+    autoLock = false;
+    closeLock = false;
+    servo2Angle--;
+    if (servo2Angle <= 0) {
+      servo2Angle = 0;
+    }
+    servo2.write(servo2Angle);
+    return true;
+  }
+  return false;
+}
+
+bool elbow(int moveServoData) {
+  if (moveServoData == 't') {
+    autoLock = false;
+    closeLock = false;
+    servo3Angle++;
+    if (servo3Angle >= 180) {
+      servo3Angle = 180;
+    }
+    servo3.write(servo3Angle);
+    return true;
+  }
+
+
+  if (moveServoData == 'y') {
+    autoLock = false;
+    closeLock = false;
+    servo3Angle--;
+    if (servo3Angle <= 0) {
+      servo3Angle = 0;
+    }
+    servo3.write(servo3Angle);
+    return true;
+  }
+
+  return false;
+}
+
+bool rotate(int moveServoData) {
+  if (moveServoData == 'e') {
+    autoLock = false;
+    closeLock = false;
+    servo4Angle++;
+    if (servo4Angle >= 180) {
+      servo4Angle = 180;
+    }
+    servo4.write(servo4Angle);
+    return true;
+  }
+
+
+  if (moveServoData == 'r') {
+    autoLock = false;
+    closeLock = false;
+    servo4Angle--;
+    if (servo4Angle <= 0) {
+      servo4Angle = 0;
+    }
+    servo4.write(servo4Angle);
+    return  true;
+  }
+
+  return false;
+}
+
+bool gripper(int moveServoData) {
+  if (moveServoData == 'q') {
+    autoLock = false;
+    closeLock = false;
+    servo5Angle++;
+    if (servo5Angle >= 90) {
+      servo5Angle = 90;
+    }
+    servo5.write(servo5Angle);
+    return true;
+  }
+
+
+  if (moveServoData == 'w') {
+    autoLock = false;
+    closeLock = false;
+    servo5Angle--;
+    if (servo5Angle <= 35) {
+      servo5Angle = 35;
+    }
+    servo5.write(servo5Angle);
+    return true;
+  }
+
+  return false;
+}
+
